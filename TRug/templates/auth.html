@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="{% static 'styles/auth.css' %}">
+</head>
+<body>
+    <div class="login-container">
+        <form class="login-form" method="POST" action="">
+            {% csrf_token %}
+            <h2>Авторизация</h2>
+            <label for="username">Пользователь:</label>
+            <input type="text" id="username" name="username" placeholder="Введите имя" required />
+
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" placeholder="Введите пароль" required />
+
+            <input type="submit" value="Логин" />
+
+        </form>
+    </div>
+
+</body>
+

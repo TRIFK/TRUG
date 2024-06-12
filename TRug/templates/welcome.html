@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добро пожаловать</title>
+    <link rel="stylesheet" href="{% static 'styles/welcome.css' %}">
+</head>
+<body>
+    <div class="welcome-container">
+        <h1>Добро пожаловать в систему</h1>
+        <div class="button-container">
+            <a href="{% url 'auth' %}" class="btn">Авторизация</a>
+            <a href="{% url 'register' %}" class="btn">Регистрация</a>
+        </div>
+    </div>
+</body>
+</html>

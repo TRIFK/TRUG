@@ -1,0 +1,78 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.register-container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+.register-form {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.register-form h2 {
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333333;
+}
+
+.register-form label {
+    margin-bottom: 5px;
+    color: #666666;
+}
+
+.register-form input[type="text"],
+.register-form input[type="password"],
+.register-form select {
+    padding: 10px;
+    margin-bottom: 5px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.register-form .error {
+    color: #ff0000;
+}
+
+ul.errorlist {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul.errorlist li {
+    color: #ff0000;
+}
+
+.register-form input[type="text"].error,
+.register-form input[type="password"].error,
+.register-form select.error {
+    border-color: #ff0000;
+}
+
+.register-form input[type="submit"] {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #007BFF;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 20px;
+}
+
+.register-form input[type="submit"]:hover {
+    background: #0056b3;
+}
