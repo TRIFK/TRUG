@@ -16,8 +16,8 @@ body {
 }
 
 .login-form {
+    width: 350px;
     display: flex;
-    justify-content: center;
     flex-direction: column;
 }
 
@@ -54,3 +54,36 @@ body {
 .login-form input[type="submit"]:hover {
     background: #0056b3;
 }
+/* Уменьшение отступа для ошибок */
+.login-form .error {
+    margin: 5px 0;
+    color: #ff0000;
+}
+
+.login-form .error ul {
+    color: #ff0000;
+    list-style-type: none;
+    padding: 0;
+}
+
+
+.login-form input[type="text"].error,
+.login-form input[type="password"].error {
+    border-color: #ff0000;
+}
+
+.login-form input[type="submit"] {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #007BFF;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 20px;
+}
+
+.login-form input[type="submit"]:hover {
+    background: #0056b3;
+}
+

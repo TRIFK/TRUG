@@ -1,28 +1,36 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 {% load static %}
-
 <head>
     <meta charset="UTF-8">
     <title>Авторизация</title>
     <link rel="stylesheet" href="{% static 'styles/auth.css' %}">
+
+    <!--<script src="{% static 'scripts/form_validation.js' %}" defer></script> -->
+
 </head>
 <body>
     <div class="login-container">
         <form class="login-form" method="POST" action="">
             {% csrf_token %}
             <h2>Авторизация</h2>
+            {% if form.non_field_errors %}
+                <div class="error">{{ form.non_field_errors }}</div>
+            {% endif %}
             <label for="username">Пользователь:</label>
-            <input type="text" id="username" name="username" placeholder="Введите имя" required />
-
+            <input type="text" id="username" name="username" placeholder="Введите имя"
+                   class="{% if form.username.errors %}error{% endif %}" value="{{ form.username.value|default_if_none:'' }}" required />
+            {% for error in form.username.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
             <label for="password">Пароль:</label>
-            <input type="password" id="password" name="password" placeholder="Введите пароль" required />
-
+            <input type="password" id="password" name="password" placeholder="Введите пароль"
+                   class="{% if form.password.errors %}error{% endif %}" value="{{ form.password.value|default_if_none:'' }}" required />
+            {% for error in form.password.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
             <input type="submit" value="Логин" />
-
         </form>
     </div>
-
 </body>
-
+</html>

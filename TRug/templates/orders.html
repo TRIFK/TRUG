@@ -8,24 +8,8 @@
     <title>TRUG</title>
 </head>
 <body>
-<header>
-    <div class="header-left">
-        <h1>Система склада Маркетинг-Юг</h1>
-    </div>
-    <div class="header-right">
-        {% if user.is_authenticated %}
-            <span>Здравствуйте, {{ user.username }}</span>
-            {% if user.is_superuser %}
-                <span>(Администратор)</span>
-            {% else %}
-                <span>(Работник)</span>
-            {% endif %}
-            <a href="{% url 'logout' %}">Выйти</a>
-        {% else %}
-            <a href="{% url 'login' %}">Войти</a>
-        {% endif %}
-    </div>
-</header>
+
+{% include 'header.html' %}
 
 <div class="main-container">
     <aside class="sidebar">
@@ -51,14 +35,11 @@
         </a>
     </aside>
 
-   <main class="content" id="content">
+ <main class="content" id="content">
         {% block content %}
-        <h2>Добро пожаловать на главную страницу!</h2>
-        <p>Пожалуйста, выберите раздел слева.</p>
+        <h2>Страниза заказов</h2>
         {% endblock %}
     </main>
-
-<script src="{% static 'scripts/dynamic_content.js' %}"></script>
 
 </div>
 </body>
