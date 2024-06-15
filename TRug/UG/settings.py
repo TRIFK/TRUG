@@ -48,7 +48,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'base.middleware.SessionTimeoutMiddleware',
 ]
+
+SESSION_COOKIE_AGE = 600  # Время жизни сессии в секундах (15 минут)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Истечение сессии при закрытии браузера
+SESSION_TIMEOUT_REDIRECT = 'welcome'
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
 
 ROOT_URLCONF = 'UG.urls'
 
@@ -127,3 +135,6 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+

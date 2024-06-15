@@ -32,7 +32,7 @@ body {
     padding: 15px 30px;
     border: none;
     border-radius: 5px;
-    background: #007BFF;
+    background: #007633;
     color: #ffffff;
     text-decoration: none;
     font-size: 16px;
@@ -41,5 +41,5 @@ body {
 }
 
 .btn:hover {
-    background: #0056b3;
+    background: #015120;
 }

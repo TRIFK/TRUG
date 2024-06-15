@@ -1,45 +1,36 @@
-<!DOCTYPE html>
-<html lang="ru">
+{% extends 'home.html' %}
 {% load static %}
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}TRUG{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'styles/home.css' %}">
-    <title>TRUG</title>
-</head>
-<body>
 
-{% include 'header.html' %}
+{% block title %}Размещение продукции{% endblock %}
 
-<div class="main-container">
-    <aside class="sidebar">
-        <a href="{% url 'products' %}" class="icon-button">
-            <img src="{% static 'images/boxes.svg' %}" alt="Продукция">
-            <span>Продукция</span>
-        </a>
-        <a href="{% url 'placement' %}" class="icon-button">
-            <img src="{% static 'images/place.svg' %}" alt="Размещение">
-            <span>Размещение</span>
-        </a>
-        <a href="{% url 'supplies' %}" class="icon-button">
-            <img src="{% static 'images/delivery.svg' %}" alt="Поставки">
-            <span>Поставки</span>
-        </a>
-        <a href="{% url 'shipment' %}" class="icon-button">
-            <img src="{% static 'images/truck.svg' %}" alt="Отгрузка">
-            <span>Отгрузка</span>
-        </a>
-        <a href="{% url 'orders' %}" class="icon-button">
-            <img src="{% static 'images/order.svg' %}" alt="Заказы">
-            <span>Заказы</span>
-        </a>
-    </aside>
+{% block content %}
+    <h2>Размещение продукции</h2>
+    <table class="placement-table">
+        <thead>
+            <tr>
+                <th>Локация</th>
+                <th>Полка</th>
+                <th>Продукт</th>
+                <th>Тип продукции</th>
+                <th>Количество</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product_location in product_locations %}
+            <tr>
+                <td>{{ product_location.shelf_location.location }}</td>
+                <td>{{ product_location.shelf_location.shelf }}</td>
+                <td>{{ product_location.product.name }}</td>
+                <td>{{ product_location.product.product_type }}</td>
+                <td>{{ product_location.product.quantity }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">Нет данных о размещении</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
 
-   <main class="content" id="content">
-        {% block content %}
-        <h2>Страница размещения</h2>
-        {% endblock %}
-    </main>
-</div>
-</body>
-</html>
+

@@ -4,6 +4,22 @@ from django.db import models
 
 from django.db import models
 
+class Product(models.Model):
+    name = models.CharField(max_length=100)
+    product_type = models.ForeignKey('ProductType', on_delete=models.CASCADE)
+    description = models.TextField(blank=True, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.IntegerField(default=0)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Продукция'
+        verbose_name_plural = 'Продукции'
+
 class ProductType(models.Model):
     name = models.CharField(max_length=100)
     updated = models.DateTimeField(auto_now=True)
@@ -16,20 +32,6 @@ class ProductType(models.Model):
         verbose_name = 'Тип-продукции'
         verbose_name_plural = 'Типы-продукции'
 
-class Product(models.Model):
-    name = models.CharField(max_length=100)
-    product_type = models.ForeignKey(ProductType, on_delete=models.CASCADE)
-    description = models.TextField(blank=True, null=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    quantity = models.IntegerField(default=0)
-    updated = models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-    class Meta:
-        verbose_name = 'Продукция'
-        verbose_name_plural = 'Продукции'
 
 
 class SupplyProduct(models.Model):
@@ -56,7 +58,7 @@ class ShipmentProduct(models.Model):
 
 class OrderProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
+    quantity = models.IntegerField(default=0)
 
     def __str__(self):
         return f"Продукт заказа '{self.product.name}' в количестве {self.quantity}"
@@ -93,9 +95,10 @@ class Shipment(models.Model):
 
 class Order(models.Model):
     customer = models.CharField(max_length=100)
-    products = models.ManyToManyField(OrderProduct, related_name='order')
-    quantity = models.IntegerField()
+    products = models.ManyToManyField(OrderProduct, related_name='products')
+    summary = models.IntegerField()
     date_ordered = models.DateField()
+    completed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Заказ от {self.customer}"

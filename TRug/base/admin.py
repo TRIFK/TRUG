@@ -10,7 +10,9 @@ class SupplyAdmin(admin.ModelAdmin):
 
 class OrderAdmin(admin.ModelAdmin):
     filter_horizontal = ['products']
-
+    list_display = ('customer', 'summary', 'date_ordered', 'completed')
+    list_filter = ('completed',)
+    search_fields = ('customer',)
 class ShipmentAdmin(admin.ModelAdmin):
     filter_horizontal = ['products']
 

@@ -1,46 +1,104 @@
-<!DOCTYPE html>
-<html lang="ru">
+{% extends 'home.html' %}
 {% load static %}
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}TRUG{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'styles/home.css' %}">
-    <title>TRUG</title>
-</head>
-<body>
+{% block title %}Заказы{% endblock %}
 
-{% include 'header.html' %}
+{% block content %}
+<h2>Заказы</h2>
 
-<div class="main-container">
-    <aside class="sidebar">
-        <a href="{% url 'products' %}" class="icon-button">
-            <img src="{% static 'images/boxes.svg' %}" alt="Продукция">
-            <span>Продукция</span>
-        </a>
-        <a href="{% url 'placement' %}" class="icon-button">
-            <img src="{% static 'images/place.svg' %}" alt="Размещение">
-            <span>Размещение</span>
-        </a>
-        <a href="{% url 'supplies' %}" class="icon-button">
-            <img src="{% static 'images/delivery.svg' %}" alt="Поставки">
-            <span>Поставки</span>
-        </a>
-        <a href="{% url 'shipment' %}" class="icon-button">
-            <img src="{% static 'images/truck.svg' %}" alt="Отгрузка">
-            <span>Отгрузка</span>
-        </a>
-        <a href="{% url 'orders' %}" class="icon-button">
-            <img src="{% static 'images/order.svg' %}" alt="Заказы">
-            <span>Заказы</span>
-        </a>
-    </aside>
+<script src="{% static 'scripts/order.js' %}"></script>
 
- <main class="content" id="content">
-        {% block content %}
-        <h2>Страниза заказов</h2>
-        {% endblock %}
-    </main>
-
+<div class="buttons">
+    <button id="add-order-button" class="icon-button">
+        <img src="{% static 'images/add.svg' %}" alt="Добавить заказ">
+    </button>
+    <a href="#" id="delete-order-button" class="icon-button">
+        <img src="{% static 'images/delete.svg' %}" alt="Удалить заказ">
+    </a>
+    <a href="#" id="edit-order" class="icon-button">
+        <img src="{% static 'images/change.svg' %}" alt="Изменить заказ">
+    </a>
+    <a href="{% url 'generate_invoice' %}" class="icon-button">
+        <img src="{% static 'images/excel.svg' %}" alt="Сформировать накладную">
+    </a>
 </div>
-</body>
-</html>
+
+<table class="shipment-table">
+    <thead>
+        <tr>
+            <th>Выбрать</th>
+            <th>Клиент</th>
+            <th>Продукция</th>
+            <th>Кол-во продукции</th>
+            <th>Сумма заказа</th>
+            <th>Дата заказа</th>
+            <th>Выполнен</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+            <tr>
+                <td><input type="checkbox" name="selected_order" value="{{ order.id }}"></td>
+                <td>{{ order.customer }}</td>
+                <td class="text2">
+                    {% for order_product in order.products.all %}
+                        <p>{{ order_product.product.name }}</p>
+                    {% endfor %}
+                </td>
+                <td class="text2">
+                    {% for order_product in order.products.all %}
+                        <p class="text2">{{ order_product.quantity }}</p>
+                    {% endfor %}
+                </td>
+                <td>{{ order.summary }}</td>
+                <td>{{ order.date_ordered }}</td>
+                {% if order.completed %}
+                    <td><img src="{% static 'images/check.svg' %}" alt="Completed"></td>
+                {% else %}
+                    <td><img src="{% static 'images/cross.svg' %}" alt="Not Completed"></td>
+                {% endif %}
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7">Нет данных о заказах</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div id="add-order-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Добавление заказа</h3>
+        <form id="add-order-form" action="{% url 'create_order' %}" method="post" data-create-order-url="{% url 'create_order' %}">
+            {% csrf_token %}
+            <label for="customer">Клиент:</label>
+            <input type="text" id="customer" name="customer" required>
+            <div id="order-products">
+                <label for="selected-products">Выберите продукцию:</label>
+                <div id="product-fields">
+                    <div class="product-field">
+                        <select name="selected_products[]" required>
+                            {% for product in products %}
+                                <option value="{{ product.id }}">{{ product.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="product-quantity">Количество:</label>
+                        <input type="number" name="product_quantities[]" min="1" required>
+                        <button type="button" class="remove-product">Удалить</button>
+                    </div>
+                </div>
+                <button type="button" id="add-product">Добавить продукцию</button>
+            </div>
+
+            <label for="summary">Итоговая сумма:</label>
+            <input type="number" id="summary" name="summary" required>
+
+            <label for="date_ordered">Дата заказа:</label>
+            <input type="date" id="date_ordered" name="date_ordered" required>
+
+            <button type="submit">Добавить заказ</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

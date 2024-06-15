@@ -1,45 +1,44 @@
-<!DOCTYPE html>
-<html lang="ru">
+{% extends 'home.html' %}
 {% load static %}
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}TRUG{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'styles/home.css' %}">
-    <title>TRUG</title>
-</head>
-<body>
 
-{% include 'header.html' %}
+{% block title %}Поставки{% endblock %}
 
-<div class="main-container">
-    <aside class="sidebar">
-        <a href="{% url 'products' %}" class="icon-button">
-            <img src="{% static 'images/boxes.svg' %}" alt="Продукция">
-            <span>Продукция</span>
-        </a>
-        <a href="{% url 'placement' %}" class="icon-button">
-            <img src="{% static 'images/place.svg' %}" alt="Размещение">
-            <span>Размещение</span>
-        </a>
-        <a href="{% url 'supplies' %}" class="icon-button">
-            <img src="{% static 'images/delivery.svg' %}" alt="Поставки">
-            <span>Поставки</span>
-        </a>
-        <a href="{% url 'shipment' %}" class="icon-button">
-            <img src="{% static 'images/truck.svg' %}" alt="Отгрузка">
-            <span>Отгрузка</span>
-        </a>
-        <a href="{% url 'orders' %}" class="icon-button">
-            <img src="{% static 'images/order.svg' %}" alt="Заказы">
-            <span>Заказы</span>
-        </a>
-    </aside>
+{% block content %}
+<h2>Поставки</h2>
+<table class="supplies-table">
+<thead>
+<tr>
+    <th>Поставщик</th>
+    <th>Продукты</th>
+    <th>Количество продуктов</th>
+    <th>Количество поставок</th>
+    <th>Дата поставки</th>
+</tr>
+</thead>
+<tbody>
+{% for supply in supplies %}
+<tr>
+    <td>{{ supply.supplier }}</td>
+    <td class="text2">
+        {% for supplies_product in supplies_products.all %}
+            <p>{{ supplies_product.product.name }}</p>
+        {% endfor %}
+    </td>
 
-<main class="content" id="content">
-        {% block content %}
-        <h2>Странциа поставок</h2>
-        {% endblock %}
-    </main>
-</div>
-</body>
-</html>
+    <td class="text2">
+        {% for supplies_product in supplies_products.all %}
+            <p>{{ supplies_product.quantity }}</p>
+        {% endfor %}
+    </td>
+
+    <td>{{ supply.quantity }}</td>
+    <td>{{ supply.date_supplied }}</td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="4">Нет данных о поставках</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

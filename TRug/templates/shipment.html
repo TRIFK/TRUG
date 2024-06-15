@@ -1,45 +1,43 @@
-<!DOCTYPE html>
-<html lang="ru">
+{% extends 'home.html' %}
 {% load static %}
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}TRUG{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'styles/home.css' %}">
-    <title>TRUG</title>
-</head>
-<body>
 
-{% include 'header.html' %}
+{% block title %}Отгрузки{% endblock %}
 
-<div class="main-container">
-    <aside class="sidebar">
-        <a href="{% url 'products' %}" class="icon-button">
-            <img src="{% static 'images/boxes.svg' %}" alt="Продукция">
-            <span>Продукция</span>
-        </a>
-        <a href="{% url 'placement' %}" class="icon-button">
-            <img src="{% static 'images/place.svg' %}" alt="Размещение">
-            <span>Размещение</span>
-        </a>
-        <a href="{% url 'supplies' %}" class="icon-button">
-            <img src="{% static 'images/delivery.svg' %}" alt="Поставки">
-            <span>Поставки</span>
-        </a>
-        <a href="{% url 'shipment' %}" class="icon-button">
-            <img src="{% static 'images/truck.svg' %}" alt="Отгрузка">
-            <span>Отгрузка</span>
-        </a>
-        <a href="{% url 'orders' %}" class="icon-button">
-            <img src="{% static 'images/order.svg' %}" alt="Заказы">
-            <span>Заказы</span>
-        </a>
-    </aside>
+{% block content %}
+<h2>Отгрузки</h2>
+<table class="shipment-table">
+<thead>
+<tr>
+    <th>Клиент</th>
+    <th>Продукты</th>
+    <th>Количество продуктов</th>
+    <th>Общее количество</th>
+    <th>Дата отгрузки</th>
+</tr>
+</thead>
+<tbody>
+{% for shipment in shipments %}
+<tr>
+    <td>{{ shipment.customer }}</td>
+    <td class="text2">
+        {% for shipment_product in shipment_products.all %}
+            <p> {{ shipment_product.product.name }} </p>
+        {% endfor %}
+    </td>
 
-  <main class="content" id="content">
-        {% block content %}
-        <h2>Страница отгрузок</h2>
-        {% endblock %}
-    </main>
-</div>
-</body>
-</html>
+    <td class="text2">
+        {% for shipment_product in shipment_products.all %}
+            <p> {{ shipment_product.quantity }} </p>
+        {% endfor %}
+    </td>
+    <td>{{ shipment.quantity }}</td>
+    <td>{{ shipment.date_shipped }}</td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="5">Нет данных об отгрузках</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}
