@@ -12,15 +12,15 @@ class RegistrationForm(UserCreationForm):
 
 
 class OrderForm(forms.ModelForm):
-    class Meta:
-        model = Order
-        fields = ['customer', 'summary', 'date_ordered']
-
     products = forms.ModelMultipleChoiceField(
         queryset=Product.objects.all(),
-        widget=forms.CheckboxSelectMultiple
+        widget=forms.CheckboxSelectMultiple,
+        required=False
     )
-    quantities = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    class Meta:
+        model = Order
+        fields = ['customer', 'summary', 'date_ordered', 'products']
 
     def __init__(self, *args, **kwargs):
         super(OrderForm, self).__init__(*args, **kwargs)
@@ -30,8 +30,35 @@ class OrderForm(forms.ModelForm):
         order = super(OrderForm, self).save(commit=False)
         if commit:
             order.save()
-            products = self.cleaned_data['products']
-            quantities = self.cleaned_data['quantities']
-            for product, quantity in zip(products, quantities):
-                OrderProduct.objects.create(order=order, product=product, quantity=quantity)
+            # Сохранение связанных продуктов в OrderProduct
+            selected_products = self.cleaned_data['products']
+            for product in selected_products:
+                OrderProduct.objects.create(order=order, product=product, quantity=0)
         return order
+
+class EditOrderForm(forms.ModelForm):
+    products = forms.ModelMultipleChoiceField(
+        queryset=Product.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
+    class Meta:
+        model = Order
+        fields = ['customer', 'summary', 'date_ordered', 'products']
+
+    def __init__(self, *args, **kwargs):
+        super(EditOrderForm, self).__init__(*args, **kwargs)
+        self.fields['products'].queryset = Product.objects.all()
+
+    def save(self, commit=True):
+        order = super(EditOrderForm, self).save(commit=False)
+        if commit:
+            order.save()
+            # Удаляем старые связанные продукты и сохраняем новые
+            OrderProduct.objects.filter(order=order).delete()
+            selected_products = self.cleaned_data['products']
+            for product in selected_products:
+                OrderProduct.objects.create(order=order, product=product, quantity=1)  # Пример количества
+        return order
+

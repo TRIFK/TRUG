@@ -115,33 +115,56 @@ h2 {
 }
 
 .buttons {
-    margin-bottom: 20px;
     display: flex;
     gap: 10px;
+    margin-bottom: 20px;
 }
 
 .icon-button {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 30px;
     text-decoration: none;
     color: #333333;
     transition: color 0.3s ease;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 150px;
+    position: relative; /* Добавляем позиционирование для подписей */
 }
 
 .icon-button img {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 10px;
+    width: 30px;
+    height: 30px;
+    margin-bottom: 5px;
 }
 
-.icon-button span {
-    font-size: 16px;
+.icon-button .button-label {
+    font-size: 12px; /* Размер текста подписи */
+    text-align: center; /* Центрируем текст */
 }
 
 .icon-button:hover {
     color: #007BFF;
+    border-color: #007BFF;
+}
+
+.icon-button .button-label {
+    position: absolute; /* Абсолютное позиционирование для подписей */
+    bottom: -20px; /* Расстояние от кнопки вниз */
+    left: 50%; /* Выравнивание по центру */
+    transform: translateX(-50%); /* Центрируем относительно родительской кнопки */
+    background-color: #007BFF; /* Цвет фона подписи */
+    color: white; /* Цвет текста подписи */
+    padding: 4px 8px; /* Внутренний отступ */
+    border-radius: 4px; /* Закругляем углы */
+    opacity: 0; /* Делаем подписи невидимыми по умолчанию */
+    transition: opacity 0.3s ease; /* Анимация появления */
+}
+
+.icon-button:hover .button-label {
+    opacity: 1; /* Показываем подписи при наведении */
 }
 
 .content {
@@ -228,31 +251,33 @@ h2 {
     background-color: #f1f1f1;
 }
 
-.shipment-table {
+.order-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.shipment-table th, .shipment-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
+.order-table th,
+.order-table td {
+    border: 2px solid #ddd; /* Увеличиваем толщину границ */
+    padding: 6px; /* Уменьшаем внутренний отступ ячеек */
 }
 
-.shipment-table th {
-    padding-top: 12px;
-    padding-bottom: 12px;
+.order-table th {
+    padding-top: 10px;
+    padding-bottom: 10px;
     text-align: left;
     background-color: #f2f2f2;
 }
 
-.shipment-table td ul {
-    padding-left: 20px; /* Adjust padding to suit your design */
-    list-style-type: none; /* Remove bullet points */
+.order-table td ul {
+    padding-left: 16px; /* Уменьшаем отступ списка */
+    list-style-type: none;
 }
 
-.shipment-table td ul li {
-    margin-bottom: 5px; /* Space between list items */
+.order-table td ul li {
+    margin-bottom: 4px; /* Уменьшаем интервал между пунктами списка */
 }
+
 
 /* Модальное окно */
 .modal {
@@ -370,3 +395,55 @@ h2 {
     .product-field .remove-product {
         margin-left: 10px;
     }
+
+    .popup-status {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px;
+    background-color: #31ea2e;
+    color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+    .popup {
+    display: none; /* По умолчанию скрыто */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #31ea2e;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+}
+
+.popup-message {
+    display: block;
+    font-size: 16px;
+    text-align: center;
+}
+
+.popup-buttons {
+    margin-top: 10px;
+}
+
+.popup-buttons button {
+    margin: 0 10px;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.popup-buttons button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}

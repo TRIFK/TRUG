@@ -15,7 +15,7 @@ from django.contrib import messages
 from .forms import OrderForm
 import json
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponseRedirect
+
 
 
 
@@ -181,10 +181,14 @@ def orders(request):
     orders_products = OrderProduct.objects.all()
     products = Product.objects.all()
     product_types = ProductType.objects.all()
+
+    # Преобразуем данные о продуктах в JSON-совместимый формат
+    products_data = list(products.values('id', 'name'))
+
     context = {
         'orders': orders,
         'orders_products': orders_products,
-        'products': products,
+        'products': products_data,  # Передаем только данные о продуктах
         'product_types': product_types
     }
     return render(request, 'orders.html', context)
@@ -193,39 +197,118 @@ def orders(request):
 @csrf_exempt
 def create_order(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        print(request.body)
         try:
             data = json.loads(request.body)
             data['completed'] = False
 
-            form = OrderForm(data)
+            products = data.get('selected_products', [])
+
+            form_data = {
+                'customer': data.get('customer', ''),
+                'summary': data.get('summary', 0),
+                'date_ordered': data.get('date_ordered', ''),
+            }
+
+            # Сначала создаем заказ (Order)
+            form = OrderForm(form_data)
             if form.is_valid():
-                order = form.save(commit=False)
-                order.save()
-                print(data)
-                selected_products = data.get('products', [])
-                product_quantities = data.get('quantities', {})
+                order_instance = form.save(commit=False)
+                order_instance.completed = False  # Устанавливаем completed на False
+                order_instance.save()
 
-                for product_id, quantity in zip(selected_products, product_quantities):
-                    product = Product.objects.get(id=product_id)
-                    OrderProduct.objects.create(order=order, product=product, quantity=quantity)
+                ids_ord = []
+                # Теперь добавляем продукты в заказ (OrderProduct)
+                for product_data in products:
+                    product_id = product_data['ID']
+                    quantity = product_data['quantity']
 
-                return JsonResponse({'success': True, 'redirect_url': '/orders/'})
+                    order_product = OrderProduct.objects.create(product_id=product_id, quantity=quantity)
+                    ids_ord.append(order_product.id)
 
+                order_instance.products.set(ids_ord)
+                return JsonResponse({'success': True})
             else:
                 errors = form.errors.as_json()
                 return JsonResponse({'success': False, 'error': errors}, status=400)
+
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+
+
+
+@csrf_exempt
+@require_POST
+def delete_orders(request):
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:
+            data = json.loads(request.body)
+            order_ids = data.get('order_id', [])
+            if order_ids and isinstance(order_ids, list):
+                # Удаление заказов из базы данных
+                deleted_count, _ = Order.objects.filter(id__in=order_ids).delete()
+                if deleted_count > 0:
+                    return JsonResponse({'success': True, 'message': 'Заказы успешно удалены'}, status=200)
+                else:
+                    return JsonResponse({'success': False, 'message': 'Заказы не найдены'}, status=404)
+            else:
+                return JsonResponse({'success': False, 'message': 'Некорректные данные'}, status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Некорректный формат JSON'}, status=400)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=500)
     else:
-        form = OrderForm()
-        products = Product.objects.all()
-        return render(request, 'orders.html', {'form': form, 'products': products})
+        return JsonResponse({'success': False, 'message': 'Неправильный тип запроса'}, status=400)
 
 
+@csrf_exempt
+@require_POST
+def edit_order(request):
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:
+            data = json.loads(request.body)
+            order_id = data.get('order_id')
+            customer = data.get('customer')
+            summary = data.get('summary')
+            date_ordered = data.get('date_ordered')
+            products = data.get('products', [])
 
+            if not order_id or not customer or not summary or not date_ordered or not products:
+                return JsonResponse({'success': False, 'message': 'Некорректные данные'}, status=400)
 
+            try:
+                order = Order.objects.get(id=order_id)
+            except Order.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'Заказ не найден'}, status=404)
 
+            order.customer = customer
+            order.summary = summary
+            order.date_ordered = date_ordered
+            order.save()
+
+            order.products.clear()
+            for product_data in products:
+                product_id = product_data['id']
+                quantity = product_data['quantity']
+                order_product = OrderProduct.objects.create(product_id=product_id, quantity=quantity)
+                order.products.add(order_product)
+
+            order.save()
+
+            return JsonResponse({'success': True, 'order': {
+                'id': order.id,
+                'customer': order.customer,
+                'summary': order.summary,
+                'date_ordered': order.date_ordered,
+                'products': [{'name': op.product.name, 'quantity': op.quantity} for op in order.products.all()]
+            }}, status=200)
+
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Некорректный формат JSON'}, status=400)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'success': False, 'message': 'Неправильный тип запроса'}, status=400)
 
 
 
