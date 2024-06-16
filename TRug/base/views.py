@@ -221,8 +221,10 @@ def create_order(request):
                 for product_data in products:
                     product_id = product_data['ID']
                     quantity = product_data['quantity']
-
                     order_product = OrderProduct.objects.create(product_id=product_id, quantity=quantity)
+                    product_in_summary = Product.objects.get(id=product_id)
+                    order_instance.summary += product_in_summary.price * quantity
+                    order_instance.save()
                     ids_ord.append(order_product.id)
 
                 order_instance.products.set(ids_ord)

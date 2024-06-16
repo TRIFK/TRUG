@@ -88,7 +88,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
         data["customer"] = document.getElementById('customer').value;
-        data["summary"] = parseFloat(document.getElementById('summary').value);
         data["date_ordered"] = document.getElementById('date_ordered').value;
 
         const productFields = document.querySelectorAll('.product-field');

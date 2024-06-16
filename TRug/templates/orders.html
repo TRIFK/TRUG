@@ -54,7 +54,7 @@
                         <p class="text2">{{ order_product.quantity }}</p>
                     {% endfor %}
                 </td>
-                <td>{{ order.summary }}</td>
+                <td>{{ order.summary }}.руб</td>
                 <td>{{ order.date_ordered }}</td>
                 {% if order.completed %}
                     <td><img src="{% static 'images/check.svg' %}" alt="Completed"></td>
@@ -104,9 +104,6 @@
                 </div>
                 <button type="button" id="add-product">Добавить продукцию</button>
             </div>
-
-            <label for="summary">Итоговая сумма:</label>
-            <input type="number" id="summary" name="summary" required>
 
             <label for="date_ordered">Дата заказа:</label>
             <input type="date" id="date_ordered" name="date_ordered" required>
